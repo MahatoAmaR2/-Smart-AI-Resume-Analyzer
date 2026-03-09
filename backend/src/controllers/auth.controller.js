@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import TokenBlacklist from "../models/blacklist.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -8,7 +9,6 @@ import jwt from "jsonwebtoken";
  * @route POST /api/auth/register
  * @access Public
  */
-
 async function registerUser(req, res) {
   try {
     const { username, email, password } = req.body;
@@ -67,7 +67,6 @@ async function registerUser(req, res) {
  * @route POST /api/auth/login
  * @access Public
  */
-
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -113,4 +112,25 @@ async function loginUser(req, res) {
   }
 }
 
-export { registerUser, loginUser };
+/**
+ * @name logutUser
+ * @desc Logout user by clearing the token cookie and add token to blacklist
+ * @route GET /api/auth/logout
+ * @access Public
+ */
+async function logoutUser(req, res) {
+  try {
+    const token = req.cookies.token;
+    if (token) {
+      await TokenBlacklist.create({ token });
+    }
+    res.clearCookie("token");
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Error logging out user:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+export { registerUser, loginUser, logoutUser };
