@@ -1,5 +1,11 @@
 import express from "express";
-import { loginUser, logoutUser, registerUser } from "../controllers/auth.controller.js";
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+  getMe,
+} from "../controllers/auth.controller.js";
+import { authUser } from "../middleware/auth.middleware.js";
 
 const authRouter = express.Router();
 
@@ -23,5 +29,13 @@ authRouter.post("/login", loginUser);
  * @access Public
  */
 authRouter.get("/logout", logoutUser);
+
+/**
+ * @route GET /api/auth/get-me
+ * @desc get the current logged in user
+ * @access Private
+ */
+
+authRouter.get("/get-me", authUser, getMe);
 
 export default authRouter;

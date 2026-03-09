@@ -132,5 +132,20 @@ async function logoutUser(req, res) {
   }
 }
 
+/**
+ * @name getMe
+ * @desc get the current logged in user
+ * @route GET /api/auth/get-me
+ * @access Private
+ */
+async function getMe(req, res) {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    res.status(200).json({ message: "User info retrieved successfully", user });
+  } catch (error) {
+    console.error("Error getting user info:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
-export { registerUser, loginUser, logoutUser };
+export { registerUser, loginUser, logoutUser, getMe };
